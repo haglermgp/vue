@@ -1,18 +1,42 @@
 <template>
   <div id="app" >
     <header>{{ title }}</header>
-    <form v-on:submit.prevent="addItem" v-on:keypress.enter='addItem'>
-      <input
-        type="text"
-        v-model='input'
-        @focus='buttonDisabled = false'
-        @blur='buttonDisabled = true'
+    <div class="canvas-button" >
+      <button
+        v-bind:class="[sizeToggle ? 'large' : '', { 'rounded': isRounded }]"
+        v-bind:disabled="disabled"
+        v-bind:style="styles"
       >
-      <button v-bind:disabled='buttonDisabled' >{{buttonText}}</button>
-    </form>
+        Start Tour
+      </button>
+    </div>
+    <hr>
+    <h4>Options</h4>
+
     <ul>
-      <li v-for='(dino, index) in dinos' >
-        {{ dino.text }}
+      <li>
+        <input type="checkbox" v-model='sizeToggle' >
+        <label>Large</label>
+      </li>
+      <li>
+        <input type="checkbox" id='round' v-model='isRounded' >
+        <label for='round' >Rounded</label>
+      </li>
+      <li>
+        <input type="checkbox" v-model='disabled' >
+        <label>Disabled</label>
+      </li>
+      <li>
+        <input type="text" v-model='backgroundColor' >
+        <label>Background Color</label>
+      </li>
+      <li>
+        <input type="text" v-model='fontColor' >
+        <label>Font Color</label>        
+      </li>
+      <li>
+        <input type="range" min='15' max='85' v-model='range' >
+        <label>Position</label>
       </li>
     </ul>
   </div>
@@ -23,31 +47,22 @@ export default {
   name: 'app',
   data () {
     return {
-      title: 'DINOSAURS',
-      input: '',
-      buttonText: 'Add Dinosour',
-      buttonDisabled: true,
-      dinos: [
-        { text: 'Terosaurio', quantity: 5 },
-        { text: 'Rex', quantity: 4 },
-        { text: 'Pet saurio', quantity: 0 },
-        { text: 'God zaurio', quantity: 10 }
-      ],
+      title: 'Style Bindings',
+      isRounded: false,
+      sizeToggle: false,
+      disabled: false,
+      backgroundColor: '#ccc',
+      fontColor: '#000',
+      range: 50,  
     }
   },
-  watch: {
-    input: function() {
-      setTimeout(() => {  
-        this.buttonText = this.input !== '' ? 'Add ' + this.input : 'Add Dinosour'
-      }, 250)
-    }
-  },
-  methods: {
-    addItem() {
-      if (this.input !== '') {
-        this.dinos.push( { text: this.input, quantity: 0 } )
-      };
-      this.input = ''
+  computed: {
+    styles: function() {
+      return {
+        color: this.fontColor,
+        background: this.backgroundColor,
+        'margin-left': this.range + "%"
+      }
     }
   }
 }
@@ -59,17 +74,20 @@ export default {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+  }
+
+  header {
+    text-align: center;
   }
 
   ul {
     list-style-type: none;
   }
 
-  li {
-    width: 300px;
+  #app {
+    width: 400px;
     border: 2px solid grey;
     border-radius: 8px;
     margin: 8px;
@@ -77,8 +95,33 @@ export default {
     padding: 8px;
   }
 
-  a {
-    color: blue;
-    text-decoration: none;
+  li {
+    height: 40px;
+    text-align: left;
   }
+
+  ul label {
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: 13px;
+    color: grey;
+  }
+
+  .large {
+    width: 120px;
+    height: 50px;
+  }
+
+  .canvas-button {
+    height: 60px;
+  }
+
+  .canvas-button button {
+    margin-top: 10px;
+  }
+
+  .rounded {
+    border-radius: 12px;
+  }
+
 </style>
