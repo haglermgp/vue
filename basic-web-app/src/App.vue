@@ -1,25 +1,20 @@
 <template>
   <div id="app" >
     <header>{{ title }}</header>
-    <form v-on:submit.prevent="addItem">
-      <input type="text" name='dino' >
-      <button >Add Dinosaur</button>
+    <form v-on:submit.prevent="addItem" v-on:keypress.enter='addItem'>
+      <input
+        type="text"
+        v-model='input'
+        @focus='buttonDisabled = false'
+        @blur='buttonDisabled = true'
+      >
+      <button v-bind:disabled='buttonDisabled' >{{buttonText}}</button>
     </form>
     <ul>
       <li v-for='(dino, index) in dinos' >
-        <button v-on:click='addDino(index)'>+</button>
-        {{ dino.quantity }}
-        <button v-on:click='decreaseDino(dino.quantity, index)'>-</button>
         {{ dino.text }}
-        <button >make extinct</button>
       </li>
     </ul>
-    <div>
-      <ul>
-        <li>Total Dinosaurs: {{ totalDinos }} <b> Dinos Updated {{dinosUpdated}}</b></li>
-        <li>Total Species: {{ totalSpecies }} <b> Species Updated {{speciesUpdated}}</b></li>
-      </ul>
-    </div>
   </div>
 </template>
 
@@ -29,8 +24,9 @@ export default {
   data () {
     return {
       title: 'DINOSAURS',
-      dinosUpdated: 0,
-      speciesUpdated: 0,
+      input: '',
+      buttonText: 'Add Dinosour',
+      buttonDisabled: true,
       dinos: [
         { text: 'Terosaurio', quantity: 5 },
         { text: 'Rex', quantity: 4 },
@@ -39,43 +35,19 @@ export default {
       ],
     }
   },
-  methods: {
-    addItem(value) {
-      let newDino = value.target[0]
-      if (newDino.value !== '') {
-        this.dinos.push({
-          text: newDino.value,
-          quantity: 0
-        })
-        newDino.value = ''
-      };
-    },
-    addDino(index) {
-      this.dinos[index].quantity += 1
-    },
-    decreaseDino(value, index) {
-      if (value > 0) {
-        this.dinos[index].quantity -= 1        
-      };
+  watch: {
+    input: function() {
+      setTimeout(() => {  
+        this.buttonText = this.input !== '' ? 'Add ' + this.input : 'Add Dinosour'
+      }, 250)
     }
   },
-  computed: {
-    totalDinos() {
-      this.dinosUpdated += 1;
-      var sum = 0;
-      var dinos = this.dinos;
-
-      dinos.forEach((element) => {
-        sum += element.quantity;
-      })
-
-      return sum
-    },
-    totalSpecies() {
-      this.speciesUpdated += 1;
-      var sum = 0;
-      var dinos = this.dinos;
-      return sum = dinos.length
+  methods: {
+    addItem() {
+      if (this.input !== '') {
+        this.dinos.push( { text: this.input, quantity: 0 } )
+      };
+      this.input = ''
     }
   }
 }
