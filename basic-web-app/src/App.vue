@@ -1,52 +1,81 @@
 <template>
   <div id="app" >
-    <header>{{ title | capitalize }}</header>
+    <header>{{ title }}</header>
+    <form v-on:submit.prevent="addItem">
+      <input type="text" name='dino' >
+      <button >Add Dinosaur</button>
+    </form>
     <ul>
-      <li v-for='(dino, index) in dinos' class="boxDinos" >
-        <h4>{{ dino.text | capitalize }}</h4>
-        <span>The <i>{{ dino.text | undercase }}</i> weight {{ dino.weight }}. </span>
-        <br>
-        <a href="">{{ dino.text | undercase | url }}</a>
+      <li v-for='(dino, index) in dinos' >
+        <button v-on:click='addDino(index)'>+</button>
+        {{ dino.quantity }}
+        <button v-on:click='decreaseDino(dino.quantity, index)'>-</button>
+        {{ dino.text }}
+        <button >make extinct</button>
       </li>
     </ul>
+    <div>
+      <ul>
+        <li>Total Dinosaurs: {{ totalDinos }} <b> Dinos Updated {{dinosUpdated}}</b></li>
+        <li>Total Species: {{ totalSpecies }} <b> Species Updated {{speciesUpdated}}</b></li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'app',
   data () {
-    return {  
-      title: 'JURASIC PARK',
+    return {
+      title: 'DINOSAURS',
+      dinosUpdated: 0,
+      speciesUpdated: 0,
       dinos: [
-        { text: 'Terosaurio', weight: '200 kg' },
-        { text: 'Rex', weight: '190 kg' },
-        { text: 'Pet saurio', weight: '20 kg' },
-        { text: 'God zaurio', weight: '10 kg' }
+        { text: 'Terosaurio', quantity: 5 },
+        { text: 'Rex', quantity: 4 },
+        { text: 'Pet saurio', quantity: 0 },
+        { text: 'God zaurio', quantity: 10 }
       ],
     }
   },
-  filters: {
-    capitalize: (value) => {
-
-      if (!value) return '';
-      value = value.toString();
-
-      return value.charAt(0).toUpperCase() + value.slice(1)
+  methods: {
+    addItem(value) {
+      let newDino = value.target[0]
+      if (newDino.value !== '') {
+        this.dinos.push({
+          text: newDino.value,
+          quantity: 0
+        })
+        newDino.value = ''
+      };
     },
-    undercase: (value) => {
-      if(!value) return '';
-        value = value.toString();
-
-        return value.toLowerCase();
+    addDino(index) {
+      this.dinos[index].quantity += 1
     },
-    url: (value) => {
-      if(!value) return '';
-        value = value.toString();
+    decreaseDino(value, index) {
+      if (value > 0) {
+        this.dinos[index].quantity -= 1        
+      };
+    }
+  },
+  computed: {
+    totalDinos() {
+      this.dinosUpdated += 1;
+      var sum = 0;
+      var dinos = this.dinos;
 
-        return 'https://wikipedia.org/wiki/' + value
+      dinos.forEach((element) => {
+        sum += element.quantity;
+      })
+
+      return sum
+    },
+    totalSpecies() {
+      this.speciesUpdated += 1;
+      var sum = 0;
+      var dinos = this.dinos;
+      return sum = dinos.length
     }
   }
 }
@@ -67,9 +96,9 @@ export default {
     list-style-type: none;
   }
 
-  .boxDinos {
+  li {
     width: 300px;
-    border: 2px solid black;
+    border: 2px solid grey;
     border-radius: 8px;
     margin: 8px;
     margin: 8px auto;
