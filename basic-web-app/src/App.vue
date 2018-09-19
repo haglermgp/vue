@@ -1,25 +1,42 @@
 <template>
   <div id="app" >
     <header>{{ title }}</header>
+    <hr>
     <form v-on:submit.prevent="addItem">
       <input type="text" name='dino' >
       <button >Add Dinosaur</button>
     </form>
-    <ul>
-      <li v-for='(dino, index) in dinos' >
-        <button v-on:click='addDino(index)'>+</button>
-        {{ dino.quantity }}
-        <button v-on:click='decreaseDino(dino.quantity, index)'>-</button>
-        {{ dino.text }}
-        <button >make extinct</button>
-      </li>
-    </ul>
-    <div>
+    <template v-if="dinos.length > 0" >
+      <h4>Dinosour List</h4>
       <ul>
-        <li>Total Dinosaurs: {{ totalDinos }} <b> Dinos Updated {{dinosUpdated}}</b></li>
-        <li>Total Species: {{ totalSpecies }} <b> Species Updated {{speciesUpdated}}</b></li>
+        <li v-for='(dino, index) in dinos' >
+          <button
+            v-on:click='addDino(index)'
+            v-show='dino.quantity < 5'
+          >
+            +
+          </button>
+          {{ dino.quantity }}
+          <button
+            v-on:click='decreaseDino(dino.quantity, index)'
+            v-show='dino.quantity > 0'
+          >
+            -
+          </button>
+          {{ dino.text }}
+          <button v-on:click='removeItem(index)' >make extinct</button>
+        </li>
       </ul>
-    </div>
+      <div>
+        <ul>
+          <li>Total Dinosaurs: {{ totalDinos }} <b> Dinos Updated {{dinosUpdated}}</b></li>
+          <li>Total Species: {{ totalSpecies }} <b> Species Updated {{speciesUpdated}}</b></li>
+        </ul>
+      </div>
+    </template>
+    <p v-else >
+      You have no Dinosours yet!
+    </p>
   </div>
 </template>
 
@@ -49,6 +66,9 @@ export default {
         })
         newDino.value = ''
       };
+    },
+    removeItem(index) {
+      this.dinos.splice(index,1)
     },
     addDino(index) {
       this.dinos[index].quantity += 1
@@ -90,6 +110,8 @@ export default {
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+    border: 2px solid grey;
+    border-radius: 12px;
   }
 
   ul {
